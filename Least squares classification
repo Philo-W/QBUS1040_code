@@ -1,0 +1,53 @@
+def error_rate(y, y_hat):
+    return np.sum(y != y_hat) / len(y)
+
+def bin_confusion_matrix(y, y_hat):
+    confusion_matrix = np.zeros((2,2))
+    confusion_matrix[0,0] = np.sum((y == 1) & (y_hat == 1)) #Number of true positives 
+    confusion_matrix[0,1] = np.sum((y == 1) & (y_hat == -1)) #Number of false negatives 
+    confusion_matrix[1,0] = np.sum((y == -1) & (y_hat == 1)) #Number of false positives 
+    confusion_matrix[1,1] = np.sum((y == -1) & (y_hat == -1)) #Number of false negatives
+    return confusion_matrix
+
+"""
+"""
+
+def multiclass_confusion(y, y_hat, K):
+    confusion_matrix = np.zeros((K, K))
+    
+    for i in range(K):
+        for j in range(K):
+            confusion_matrix[i,j] = np.sum((y == i) & (y_hat == j))
+    return confusion_matrix
+
+def multiclass_classifier(A, y, K):
+    N, p = A.shape #N is number of observations, p is number of basis functions
+    
+    Y_tilde = np.zeros((N, K)) #Store y_tilde for each class as columns 
+    Theta = np.zeros((p, K)) #Store coefficients for each class as columns 
+    A_p = np.linalg.pinv(A)
+    for i in range(K):
+        y_i = np.where(y == i, 1, -1)
+        theta_hat_i = A_p @ y_i
+        Theta[:, i] = theta_hat_i #Setting the ith column to theta_hat_i
+        Y_tilde[:, i] = A @ theta_hat_i
+        
+    y_hat_multiclass = np.argmax(Y_tilde, axis=1) #Take the argmax going across columns 
+    
+    return y_hat_multiclass, Theta
+    
+def multiclass_classifier_test1(A_tr, A_te, y_tr, K):
+    N, p = A_te.shape #N is number of observations, p is number of basis functions
+    
+    Y_tilde = np.zeros((N, K)) #Store y_tilde for each class as columns 
+    Theta = np.zeros((p, K)) #Store coefficients for each class as columns 
+    A_p = np.linalg.pinv(A_tr)
+    for i in range(K):
+        y_train_i = np.where(y_tr == i, 1, -1)
+        theta_hat_i = A_p @ y_train_i
+        Theta[:, i] = theta_hat_i #Setting the ith column to theta_hat_i
+        Y_tilde[:, i] = A_te @ theta_hat_i
+        
+    y_hat_multiclass = np.argmax(Y_tilde, axis=1) #Take the argmax going across columns 
+    
+    return y_hat_multiclass, Theta
