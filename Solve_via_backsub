@@ -1,0 +1,42 @@
+def gram_schmidt(a):
+    q = []
+    for i in range(len(a)):
+        #orthogonalization
+        q_tilde = a[i]
+        for j in range(len(q)):
+            q_tilde = q_tilde - np.inner(q[j],a[i])*q[j]
+        
+        #Test for dependennce
+        if np.linalg.norm(q_tilde) < 1e-5 :  
+            print("Vectors are linearly dependent.")
+            print ("GS algorithm terminates at iteration ", i+1)
+            return q
+        
+        #Normalization
+        else:
+            qi = q_tilde / np.linalg.norm(q_tilde)
+            q.append(qi)
+            
+#     print("Vector are linearly independent.")
+    return q
+
+def qr(A):
+    Q_transpose = np.array(gram_schmidt(A.T)) #original qi gives rows, however we need the column vectors therefore need q_transpose
+    R = Q_transpose @ A #@ as for matrix multiplication
+    return Q_transpose.T, R
+
+def back_subst(R,y):
+    n = R.shape[0]
+    x = np.zeros(n)
+    for i in reversed(range(n)): # i = n-1, n-2, ..., 1, 0
+        x[i] = y[i]
+        for j in range(i+1, n): # j = i+1, i+2, ..., n-2, n-1
+            x[i] = x[i] - R[i,j]*x[j]
+        x[i] = x[i] / R[i,i]
+    return x
+
+def solve_via_backsub(A,b):
+    Q,R = qr(A)
+    b_tilde = Q.T @ b
+    x = back_subst(R,b_tilde)
+    return x
