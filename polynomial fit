@@ -1,0 +1,26 @@
+def vandermonde(t,n):
+    m = len(t)
+    A = np.zeros((m,n))
+    for i in range(m):
+        for j in range(n):
+            A[i,j] = t[i]**j
+    return A
+
+def rms(y):
+    return np.linalg.norm(y) / np.sqrt(len(y))
+    
+def polyfit(x,y,deg):
+    A = vandermonde(x, deg+1)
+    theta_hat = solve_via_backsub(A,y)
+    return theta_hat
+
+
+def polyeval(x, theta_hat, deg):
+    A = vandermonde(x, deg+1)
+    preds = A @ theta_hat
+    return preds
+
+deg = 2 
+theta_hat_2 = polyfit(x, y, deg)
+y_hat_2 = polyeval(x, theta_hat_2, deg)
+error_2 = rms(y - y_hat_2)
