@@ -1,0 +1,4 @@
+def richardson(A,b,k):
+    for i in range(k-1):
+        x[i+1,:] = x[i,:] - (1/(np.linalg.norm(A)**2))*A.T @ (A@x[i,:]-b)
+    return x
