@@ -1,0 +1,9 @@
+def AdjMatrix(num_of_nodes, num_of_edges, relation_matrix):
+    AdjMatrix = np.zeros((num_of_edges, num_of_nodes))
+    
+    for i in relation_matrix:
+        AdjMatrix[(i[0]-1),(i[2]-1)]= 1
+    for j in relation_matrix:
+        AdjMatrix[(j[0]-1),(j[1]-1)]= -1
+
+    return AdjMatrix.T
